@@ -1,8 +1,10 @@
 import logging
+
 import settings
 
+from kiroshi.alerts import microsoft_teams, opsgenie
 from kiroshi.request_retrys import requests_retry_session
-from kiroshi.alerts import opsgenie, microsoft_teams
+
 
 def check_prometheus():
     failures = 0

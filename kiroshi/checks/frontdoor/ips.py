@@ -1,14 +1,14 @@
-from loguru import logger
 import socket
 
-from kiroshi.database import FrontDoorIPs, engine
+import pendulum
+from loguru import logger
 from sqlalchemy import select
 from sqlalchemy.orm import Session
-import pendulum
+
 from kiroshi.alerts.freshservice import alert_freshservice
 from kiroshi.alerts.ms_teams import alert_msteams
+from kiroshi.database import FrontDoorIPs, engine
 from kiroshi.misc.redislock import RedisLock
-
 
 redis_lock = RedisLock(lock_name="check-frontdoor-ips", lock_type="alert_suppression", lock_mins=60)
 

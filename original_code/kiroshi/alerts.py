@@ -1,7 +1,10 @@
-from settings import teams_webhook, opsgenie_url, opsgenie_api_key
-from kiroshi.request_retrys import requests_retry_session
-from requests.auth import HTTPBasicAuth
 import logging
+
+from requests.auth import HTTPBasicAuth
+from settings import opsgenie_api_key, opsgenie_url, teams_webhook
+
+from kiroshi.request_retrys import requests_retry_session
+
 
 def opsgenie(message):
     session = requests_retry_session()

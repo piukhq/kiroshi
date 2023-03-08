@@ -1,8 +1,10 @@
-from kiroshi.settings import settings
-import redis
 import hashlib
+
 import pendulum
+import redis
 from loguru import logger
+
+from kiroshi.settings import settings
 
 
 def alert_suppression(alert_name: str, alert_value: str, duration_mins: int = 60) -> bool:

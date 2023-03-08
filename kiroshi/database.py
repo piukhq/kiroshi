@@ -1,5 +1,5 @@
+from sqlalchemy import ARRAY, Column, DateTime, Integer, String, create_engine
 from sqlalchemy.orm import declarative_base
-from sqlalchemy import create_engine, Column, Integer, DateTime, ARRAY, String
 
 from kiroshi.settings import settings
 

@@ -1,7 +1,8 @@
-from kiroshi.settings import settings
+import json
 
 import requests
-import json
+
+from kiroshi.settings import settings
 
 
 def opsgenie(message):

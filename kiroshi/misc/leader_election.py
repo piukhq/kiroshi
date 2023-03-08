@@ -1,8 +1,10 @@
-from kiroshi.settings import settings
-import redis
 import socket
+
 import pendulum
+import redis
 from loguru import logger
+
+from kiroshi.settings import settings
 
 
 def leader_election(job_name: str) -> bool:
