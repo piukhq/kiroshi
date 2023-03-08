@@ -1,5 +1,6 @@
 from azure.identity import DefaultAzureCredential
-from azure.monitor.query import LogsQueryClient, LogsQueryStatus
+from azure.monitor.query import LogsQueryClient
+# LogsQueryStatus
 import pendulum
 from loguru import logger
 from kiroshi.alerts.opsgenie import opsgenie
