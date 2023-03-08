@@ -2,6 +2,7 @@ from azure.identity import DefaultAzureCredential
 from azure.monitor.query import LogsQueryClient, LogsQueryStatus
 import pendulum
 from loguru import logger
+from kiroshi.alerts.opsgenie import opsgenie
 
 
 class CheckFrontDoorTraffic():
@@ -34,5 +35,6 @@ class CheckFrontDoorTraffic():
             else:
                 logger.info(f"{tenant}: 0")
                 logger.info(f"Firing Alerts for OpsGenie")
-                logger.info(f"Firing Alerts for Microsoft Teams")
-                logger.info(f"Firing Alerts for Fresh Service")
+                opsgenie(f"There has been no traffic for 30 minutes from {tenant}")
+                # logger.info(f"Firing Alerts for Microsoft Teams")
+                # logger.info(f"Firing Alerts for Fresh Service")
