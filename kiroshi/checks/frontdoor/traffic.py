@@ -1,12 +1,13 @@
 from azure.identity import DefaultAzureCredential
 from azure.monitor.query import LogsQueryClient
+
 # LogsQueryStatus
 import pendulum
 from loguru import logger
 from kiroshi.alerts.opsgenie import opsgenie
 
 
-class CheckFrontDoorTraffic():
+class CheckFrontDoorTraffic:
     def __init__(self) -> None:
         self.workspace_id = "eed2b98d-3396-4972-be3e-3e744532f7cd"
 

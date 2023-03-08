@@ -12,6 +12,7 @@ from kiroshi.misc.redislock import RedisLock
 
 redis_lock = RedisLock(lock_name="check-frontdoor-ips", lock_type="alert_suppression", lock_mins=60)
 
+
 class CheckFrontDoorIPs:
     def __init__(self, domain: str) -> None:
         self.domain = domain
@@ -65,5 +66,5 @@ class CheckFrontDoorIPs:
                     Domain: {domain},
                     Previous IP Addresses: {previous_ips},
                     New IP Addresses: {new_ips}
-                    """
+                    """,
                 )

@@ -9,7 +9,7 @@ import redis
 import hashlib
 
 
-class RedisLock():
+class RedisLock:
     def __init__(self, lock_name: str, lock_data: str | None = None, lock_mins: int = 3):
         self.lock_name = lock_name
         self.lock_mins = lock_mins
