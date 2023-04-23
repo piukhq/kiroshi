@@ -8,9 +8,6 @@ from sqlalchemy.orm import Session
 from kiroshi.alerts.freshservice import alert_freshservice
 from kiroshi.alerts.ms_teams import alert_msteams
 from kiroshi.database import FrontDoorIPs, engine
-from kiroshi.misc.redislock import RedisLock
-
-redis_lock = RedisLock(lock_name="check-frontdoor-ips", lock_type="alert_suppression", lock_mins=60)
 
 
 class CheckFrontDoorIPs:
@@ -50,21 +47,20 @@ class CheckFrontDoorIPs:
             logger.info(f"Previous records: {previous_ips}")
             logger.info(f"New records: {new_ips}")
             self.update_database(ips=live_ips)
-            if redis_lock.run():
-                alert_msteams(
-                    title="Azure Front Door IP Change",
-                    facts=[
-                        {"name": "Domain", "value": domain},
-                        {"name": "Previous IPs", "value": previous_ips},
-                        {"name": "New IPs", "value": new_ips},
-                    ],
-                )
-                alert_freshservice(
-                    subject="Azure Front Door IP Change",
-                    message=f"""
-                    A Front Door has changed its public IP Address, details:
-                    Domain: {domain},
-                    Previous IP Addresses: {previous_ips},
-                    New IP Addresses: {new_ips}
-                    """,
-                )
+            alert_msteams(
+                title="Azure Front Door IP Change",
+                facts=[
+                    {"name": "Domain", "value": domain},
+                    {"name": "Previous IPs", "value": previous_ips},
+                    {"name": "New IPs", "value": new_ips},
+                ],
+            )
+            alert_freshservice(
+                subject="Azure Front Door IP Change",
+                message=f"""
+                A Front Door has changed its public IP Address, details:
+                Domain: {domain},
+                Previous IP Addresses: {previous_ips},
+                New IP Addresses: {new_ips}
+                """,
+            )

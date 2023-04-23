@@ -1,7 +1,7 @@
 import click
 
-# from kiroshi.checks.frontdoor.ips import CheckFrontDoorIPs
-# from kiroshi.checks.frontdoor.ranges import CheckFrontDoorRanges
+from kiroshi.checks.frontdoor.ips import CheckFrontDoorIPs
+from kiroshi.checks.frontdoor.ranges import CheckFrontDoorRanges
 from kiroshi.checks.frontdoor.traffic import CheckFrontDoorTraffic
 
 
