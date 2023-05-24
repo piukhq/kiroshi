@@ -1,10 +1,13 @@
 import click
+from trogon import tui
 
 from kiroshi.checks.frontdoor.ips import CheckFrontDoorIPs
 from kiroshi.checks.frontdoor.ranges import CheckFrontDoorRanges
 from kiroshi.checks.frontdoor.traffic import CheckFrontDoorTraffic
+from kiroshi.checks.spreedly.certificates import CheckSpreedlyCertificates
 
 
+@tui()
 @click.group()
 def cli() -> None:
     pass
@@ -52,6 +55,12 @@ def check_frontdoor_traffic():
 @checks_spreedly.command(name="gateways")
 def check_spreedly_gateways():
     pass
+
+
+@checks_spreedly.command(name="certificates")
+def check_spreedly_certificates():
+    check = CheckSpreedlyCertificates()
+    check.run()
 
 
 if __name__ == "__main__":

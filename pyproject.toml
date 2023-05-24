@@ -23,6 +23,8 @@ pendulum = "^2.1.2"
 beautifulsoup4 = "^4.11.2"
 redis = "^4.5.1"
 azure-keyvault = "^4.2.0"
+trogon = "^0.2.1"
+cryptography = "^40.0.2"
 
 
 [tool.poetry.group.dev.dependencies]
