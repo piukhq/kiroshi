@@ -18,9 +18,9 @@ class CheckSpreedlyCertificates:
         self.token = "4WrgUWZwpK8VM98ZWkGQBwTUuOQ"
 
     def get_credentials(self) -> tuple:
-        with open(f"{settings.secret_store}/spreedly_user") as f:
+        with open(f"{settings.secret_store}/spreedly-oAuthUsername") as f:
             spreedly_user = json.loads(f.read())["value"]
-        with open(f"{settings.secret_store}/spreedly_pass") as f:
+        with open(f"{settings.secret_store}/spreedly-oAuthPassword") as f:
             spreedly_pass = json.loads(f.read())["value"]
         return (spreedly_user, spreedly_pass)
 
@@ -41,7 +41,7 @@ class CheckSpreedlyCertificates:
         return {"expires_soon": expires_soon, "date": expiration_date}
 
     def get_kv_certificate(self) -> dict:
-        with open(f"{settings.secret_store}/amex_certs") as f:
+        with open(f"{settings.secret_store}/amex-cert") as f:
             return json.dumps(f.read())
 
     def requires_updating(self, spreedly_cert: dict, local_cert: dict) -> bool:
