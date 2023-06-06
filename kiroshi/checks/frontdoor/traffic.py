@@ -2,22 +2,23 @@
 import pendulum
 from azure.identity import DefaultAzureCredential
 from azure.monitor.query import LogsQueryClient
-from loguru import logger
 
 from kiroshi.alerts.opsgenie import opsgenie
+from kiroshi.settings import logger
 
 
 class CheckFrontDoorTraffic:
-    def __init__(self) -> None:
+    def __init__(self, domain: str) -> None:
         self.workspace_id = "eed2b98d-3396-4972-be3e-3e744532f7cd"
+        self.domain = domain
 
     def loganalytics(self) -> dict:
-        query = """
+        query = f"""
         let range_barclays = "157.83.0.0/16";
         let range_lloyds = "141.92.0.0/16";
         AzureDiagnostics
         | where Category == "FrontDoorAccessLog"
-        | where requestUri_s startswith "https://api.gb.bink.com:443/"
+        | where requestUri_s startswith "https://{self.domain}:443/"
         | where ipv4_is_in_range(clientIp_s, range_barclays) or ipv4_is_in_range(clientIp_s, range_lloyds)
         | extend tenant = iff(ipv4_is_in_range(clientIp_s, range_barclays), "Barclays", "Lloyds")
         | summarize count() by tenant
