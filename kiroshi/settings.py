@@ -1,4 +1,8 @@
+import sys
+
 from pydantic import BaseSettings, HttpUrl, PostgresDsn
+
+from kiroshi.settings import logger
 
 
 class Settings(BaseSettings):
@@ -7,6 +11,17 @@ class Settings(BaseSettings):
     opsgenie_api_key: str = "74f3f087-c29e-4490-a410-21c8f24e394c"
     opsgenie_url: str = "https://api.opsgenie.com/v2/alerts"
     secret_store: str = "/tmp"
+    json_logging: bool = True
 
 
 settings = Settings()
+
+
+logger_format = (
+    "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | "
+    "<level>{level: <8}</level> | "
+    "<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - "
+    "<level>{message}</level> | <green>{extra}</green>"
+)
+logger.remove()
+logger.add(sys.stdout, format=logger_format, serialize=settings.json_logging, colorize=not settings.json_logging)
