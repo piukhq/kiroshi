@@ -1,6 +1,6 @@
+import csv
 from pathlib import Path
 
-import csv
 import paramiko
 import pendulum
 
