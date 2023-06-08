@@ -6,6 +6,7 @@ from kiroshi.cli.checks.spreedly import spreedly as checks_spreedly
 from kiroshi.cli.sftp.mastercard import mastercard as sftp_mastercard
 from kiroshi.cli.sftp.wasabi import wasabi as sftp_wasabi
 
+
 @tui()
 @click.group()
 def cli() -> None:
