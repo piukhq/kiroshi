@@ -12,18 +12,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: aquasecurity/trivy-action@master
+      - uses: actions/dependency-review-action@v3
         with:
-          scan-type: fs
-          scan-ref: '.'
-          scanners: 'vuln'
-          vuln-type: library
-          ignore-unfixed: true
-          format: 'sarif'
-          output: 'trivy-results.sarif'
-      -   uses: github/codeql-action/upload-sarif@v2
-          with:
-            sarif_file: 'trivy-results.sarif'
+          fail-on-severity: high
       - uses: actions/setup-python@v4
         with:
           python-version: '3.11'
