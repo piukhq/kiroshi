@@ -7,14 +7,21 @@ on:
     branches: [master]
 
 jobs:
-  test:
-    name: test
+  dependency-review:
+    if: github.event_name == 'pull_request'
+    name: dependency-review
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/dependency-review-action@v3
         with:
           fail-on-severity: high
+
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
         with:
           python-version: '3.11'
