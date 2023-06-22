@@ -1,3 +1,7 @@
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
 [tool.poetry]
 name = "Kiroshi"
 version = "0.0.0"
@@ -6,7 +10,7 @@ authors = ["Bink DevOps <devops@bink.com>"]
 readme = "README.md"
 
 [tool.poetry.scripts]
-kiroshi = "kiroshi.cli.cli:cli"
+kiroshi = "kiroshi.cli.cli:cli" # cli
 
 [tool.poetry.dependencies]
 python = "^3.11"
@@ -28,12 +32,10 @@ cryptography = "^41.0.0"
 paramiko = "^3.2.0"
 azure-storage-blob = "^12.16.0"
 
-
 [tool.poetry.group.dev.dependencies]
 isort = "^5.12.0"
 black = "^23.1.0"
 ruff = "^0.0.248"
-
 
 [tool.black]
 line-length = 120
@@ -51,7 +53,3 @@ line-length = 250
 "kiroshi/cli.py" = ["F821"]
 "kiroshi/misc/redislock.py" = ["F401"]
 "kiroshi/checks/frontdoor/traffic.py" = ["F541", "F401"]
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
