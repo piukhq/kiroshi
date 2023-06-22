@@ -1,4 +1,5 @@
 import sys
+from typing import Optional
 
 from loguru import logger
 from pydantic import BaseSettings, HttpUrl, PostgresDsn
@@ -12,8 +13,8 @@ class Settings(BaseSettings):
     secret_store: str = "/tmp"
     json_logging: bool = True
 
-    blob_storage_account_dsn: str
-    sftp_storage_account_dsn: str
+    blob_storage_account_dsn: Optional[str]
+    sftp_storage_account_dsn: Optional[str]
 
 
 settings = Settings()
