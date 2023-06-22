@@ -1,8 +1,7 @@
 import sys
 
+from loguru import logger
 from pydantic import BaseSettings, HttpUrl, PostgresDsn
-
-from kiroshi.settings import logger
 
 
 class Settings(BaseSettings):
@@ -12,6 +11,9 @@ class Settings(BaseSettings):
     opsgenie_url: str = "https://api.opsgenie.com/v2/alerts"
     secret_store: str = "/tmp"
     json_logging: bool = True
+
+    blob_storage_account_dsn: str
+    sftp_storage_account_dsn: str
 
 
 settings = Settings()

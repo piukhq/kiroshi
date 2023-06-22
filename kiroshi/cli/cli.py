@@ -3,6 +3,7 @@ from trogon import tui
 
 from kiroshi.cli.checks.frontdoor import frontdoor as checks_frontdoor
 from kiroshi.cli.checks.spreedly import spreedly as checks_spreedly
+from kiroshi.cli.sftp.blobcopy import blobcopy as sftp_blobcopy
 from kiroshi.cli.sftp.mastercard import mastercard as sftp_mastercard
 from kiroshi.cli.sftp.wasabi import wasabi as sftp_wasabi
 
@@ -33,6 +34,7 @@ checks.add_command(checks_frontdoor)
 checks.add_command(checks_spreedly)
 sftp.add_command(sftp_mastercard)
 sftp.add_command(sftp_wasabi)
+sftp.add_command(sftp_blobcopy)
 
 
 if __name__ == "__main__":
