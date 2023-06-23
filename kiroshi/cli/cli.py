@@ -1,3 +1,5 @@
+"""Module containing the command-line interface for Kiroshi."""
+
 import click
 from trogon import tui
 
@@ -11,23 +13,17 @@ from kiroshi.cli.sftp.wasabi import wasabi as sftp_wasabi
 @tui()
 @click.group()
 def cli() -> None:
-    pass
+    """Group for the top-level commands and groups."""
 
 
 @cli.group(name="checks")
 def checks() -> None:
-    """
-    Monitoring Tools
-    """
-    pass
+    """Group for Monitoring Tools."""
 
 
 @cli.group(name="sftp")
 def sftp() -> None:
-    """
-    SFTP Tools
-    """
-    pass
+    """Group for SFTP Tools."""
 
 
 checks.add_command(checks_frontdoor)

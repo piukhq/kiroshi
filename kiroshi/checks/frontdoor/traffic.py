@@ -1,4 +1,4 @@
-# LogsQueryStatus
+"""Module containing front door traffic monitoring checks."""
 import pendulum
 from azure.identity import DefaultAzureCredential
 from azure.monitor.query import LogsQueryClient
@@ -8,11 +8,18 @@ from kiroshi.settings import logger
 
 
 class CheckFrontDoorTraffic:
+    """Class for monitoring traffic on the Azure Front Door service for a given domain."""
+
     def __init__(self, domain: str) -> None:
+        """Initialize a CheckFrontDoorTraffic instance.
+
+        Args:
+            domain (str): The domain to monitor traffic for.
+        """
         self.workspace_id = "eed2b98d-3396-4972-be3e-3e744532f7cd"
         self.domain = domain
 
-    def loganalytics(self) -> dict:
+    def _loganalytics(self) -> dict:
         query = f"""
         let range_barclays = "157.83.0.0/16";
         let range_lloyds = "141.92.0.0/16";
@@ -26,18 +33,22 @@ class CheckFrontDoorTraffic:
         credential = DefaultAzureCredential()
         client = LogsQueryClient(credential)
         response = client.query_workspace(
-            workspace_id=self.workspace_id, query=query, timespan=pendulum.duration(minutes=30)
+            workspace_id=self.workspace_id,
+            query=query,
+            timespan=pendulum.duration(minutes=30),
         )
-        return {tenant: count for tenant, count in response.tables[0].rows}
+        return dict(response.tables[0].rows)
 
     def run(self) -> None:
-        counts = self.loganalytics()
+        """Run the Front Door traffic monitoring check and log the results.
+
+        If there has been no traffic for 30 minutes from a monitored domain, an alert is sent to OpsGenie.
+        """
+        counts = self._loganalytics()
         for tenant in ["Barclays", "Lloyds"]:
             if tenant in counts:
                 logger.info(f"{tenant}: {counts[tenant]}")
             else:
                 logger.info(f"{tenant}: 0")
-                logger.info(f"Firing Alerts for OpsGenie")
+                logger.info("Firing Alerts for OpsGenie")
                 opsgenie(f"There has been no traffic for 30 minutes from {tenant}")
-                # logger.info(f"Firing Alerts for Microsoft Teams")
-                # logger.info(f"Firing Alerts for Fresh Service")

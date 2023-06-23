@@ -1,3 +1,5 @@
+"""Module providing a command-line interface for connecting to the Wasabi SFTP and pulling files locally."""
+
 import click
 
 from kiroshi.sftp.wasabi import WasabiSFTP
@@ -19,7 +21,13 @@ from kiroshi.sftp.wasabi import WasabiSFTP
     help="The Wasabi SFTP user to use",
 )
 @click.option("-p", "--port", default=22, type=int, help="The Wasabi SFTP port")
-@click.option("-k", "--keypath", default="/tmp/wasabi", type=str, help="The Path to the Wasabi SFTP RSA Key")
+@click.option(
+    "-k",
+    "--keypath",
+    default="/tmp/wasabi",  # noqa: S108
+    type=str,
+    help="The Path to the Wasabi SFTP RSA Key",
+)
 @click.option(
     "-d",
     "--directories",
@@ -27,14 +35,14 @@ from kiroshi.sftp.wasabi import WasabiSFTP
     type=click.Choice(
         [
             "/upload:/mnt/harmonia-imports/scheme/wasabi",
-        ]
+        ],
     ),
     help="Map of remote and local directories to use, colon seperated",
 )
-def wasabi(host: str, user: str, port: int, keypath: str, directories: str):
-    """
-    Connect to the Wasabi SFTP and pull files locally,
-    designed to be used in conjunction with Harmonia.
+def wasabi(host: str, user: str, port: int, keypath: str, directories: str) -> None:
+    """Connect to the Wasabi SFTP and pull files locally.
+
+    Designed to be used in conjunction with Harmonia.
     """
     sftp = WasabiSFTP(host=host, port=port, user=user, keypath=keypath, directories=directories)
     sftp.run()

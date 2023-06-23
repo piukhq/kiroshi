@@ -1,7 +1,7 @@
-"""Initial Database
+"""Initial Database.
 
 Revision ID: d2d36306e779
-Revises: 
+Revises:
 Create Date: 2023-02-10 13:40:56.504935
 
 """
@@ -17,6 +17,7 @@ depends_on = None
 
 
 def upgrade() -> None:
+    """Create frontdoor_ranges and frontdoor_ips tables."""
     op.create_table(
         "frontdoor_ranges",
         sa.Column("id", sa.Integer, primary_key=True),
@@ -33,5 +34,6 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
+    """Drop frontdoor_ranges and frontdoor_ips tables."""
     op.drop_table("frontdoor_ranges")
     op.drop_table("frontdoor_ips")

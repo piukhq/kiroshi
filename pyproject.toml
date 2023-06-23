@@ -33,23 +33,15 @@ paramiko = "^3.2.0"
 azure-storage-blob = "^12.16.0"
 
 [tool.poetry.group.dev.dependencies]
-isort = "^5.12.0"
-black = "^23.1.0"
-ruff = "^0.0.248"
+black = "^23.3.0"
+ruff = "^0.0.275"
 
 [tool.black]
 line-length = 120
 force-exclude = 'original_code/*'
 
-[tool.isort]
-line_length = 120
-profile = "black"
-
 [tool.ruff]
+select = ["ALL"]
+ignore = ["D203", "D213", "D407", "ANN101"]
 line-length = 250
-
-[tool.ruff.per-file-ignores]
-"original_code/kiroshi/kiroshi.py" = ["F401", "E722"]
-"kiroshi/cli.py" = ["F821"]
-"kiroshi/misc/redislock.py" = ["F401"]
-"kiroshi/checks/frontdoor/traffic.py" = ["F541", "F401"]
+exclude = ["original_code/"]
