@@ -1,3 +1,4 @@
+"""Module containing the WasabiSFTP class."""
 import csv
 from pathlib import Path
 
@@ -8,9 +9,27 @@ from kiroshi.settings import logger
 
 
 class WasabiSFTP:
-    def __init__(
-        self, host: str, port: int, user: str, chunksize: int, keypath: str, directories: str = None, dir: str = None
-    ):
+    """Class for connecting to a Wasabi SFTP server, splitting large CSV files into smaller chunks, and archiving processed files."""
+
+    def __init__(  # noqa: PLR0913
+        self,
+        host: str,
+        port: int,
+        user: str,
+        chunksize: int,
+        keypath: str,
+        directories: str | None = None,
+    ) -> None:
+        """Initialize a new instance of the WasabiSFTP class.
+
+        Args:
+            host (str): The hostname of the Wasabi SFTP server.
+            port (int): The port number of the Wasabi SFTP server.
+            user (str): The username to use when connecting to the Wasabi SFTP server.
+            chunksize (int): The maximum number of rows to include in each chunked file.
+            keypath (str): The path to the private key file to use when connecting to the Wasabi SFTP server.
+            directories (str | None, optional): A string containing the remote and local directories to use. Defaults to None.
+        """
         self.host = host
         self.port = port
         self.user = user
@@ -18,7 +37,7 @@ class WasabiSFTP:
         self.chunksize = chunksize
         self.remote_path, self.local_path = directories.split(":")
 
-    def client(self) -> paramiko.SFTPClient:
+    def _connect(self) -> paramiko.SFTPClient:
         logger.info(
             "Connecting to Wasabi SFTP",
             host=self.host,
@@ -39,8 +58,8 @@ class WasabiSFTP:
         )
         return ssh.open_sftp()
 
-    def split_file(self, file) -> None:
-        s = self.client()
+    def _split_file(self, file: str) -> None:
+        s = self._connect()
         output = None
         with s.open(f"{self.local_path}/{file}", "r") as original:
             reader = csv.DictReader(original)
@@ -56,8 +75,8 @@ class WasabiSFTP:
                     dict_writer.writeheader()
                 dict_writer.writerow(row)
 
-    def archive_sftp_file(self) -> None:
-        s = self.client()
+    def _archive_sftp_file(self) -> None:
+        s = self._connect()
         archive_path = f"archive/{pendulum.today().format('YYYY/MM/DD')}"
         logger.info("Creating Archive Directory", directory=archive_path)
         Path(archive_path).mkdir(parents=True, exist_ok=True)
@@ -65,14 +84,15 @@ class WasabiSFTP:
             logger.info("Moving file", from_dir=f"/{self.local_path}", to_dir="/archive", file=i)
             s.rename(f"/{self.local_path}/{i}", f"/archive/{pendulum.today().format('YYYY/MM/DD')}/{i}")
 
-    def run(self):
-        s = self.client()
+    def run(self) -> None:
+        """Run the WasabiSFTP instance, splitting files, uploading chunks to the remote server, and archiving processed files."""
+        s = self._connect()
         for i in s.listdir(self.local_path):
-            self.split_file(i)
+            self._split_file(i)
 
         for i in s.listdir("chunks/"):
             logger.info("Moving file", from_dir="/chunks", to_dir=f"/{self.remote_path}", file=i)
             s.get(f"chunks/{i}", f"{self.remote_path}/{i}")
             s.remove(f"chunks/{i}")
 
-        self.archive_sftp_file()
+        self._archive_sftp_file()

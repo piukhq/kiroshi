@@ -1,3 +1,4 @@
+"""Module containing Azure Front Door IP range monitoring checks."""
 import ipaddress
 import json
 
@@ -11,40 +12,44 @@ from kiroshi.alerts.ms_teams import alert_msteams
 from kiroshi.database import FrontDoorRanges, engine
 from kiroshi.settings import logger
 
+# in seconds
+REQUEST_TIMEOUT = 10
+
+IPV4 = 4
+
 
 class CheckFrontDoorRanges:
-    def __init__(self):
-        pass
+    """A class for monitoring Azure Front Door IP ranges and updating a database with the latest ranges."""
 
-    def check_azure(self) -> list:
+    def _check_azure(self) -> list:
         try:
             page = "https://www.microsoft.com/en-us/download/confirmation.aspx?id=56519"
             headers = {
                 "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
-                "(KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36 Edg/109.0.1518.78"
+                "(KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36 Edg/109.0.1518.78",
             }
-            request = requests.get(page, headers=headers)
+            request = requests.get(page, headers=headers, timeout=REQUEST_TIMEOUT)
             request.raise_for_status()
 
             soup = bs4.BeautifulSoup(request.content, features="html.parser")
             json_file = soup.find("a", attrs={"data-bi-id": "downloadretry"}).attrs["href"]
 
-            file_resp = requests.get(json_file, headers=headers)
+            file_resp = requests.get(json_file, headers=headers, timeout=REQUEST_TIMEOUT)
             data = json.loads(file_resp.content)
-            frontdoor = next((section for section in data["values"] if section["id"] == "AzureFrontDoor.Frontend"))
+            frontdoor = next(section for section in data["values"] if section["id"] == "AzureFrontDoor.Frontend")
 
             address_prefixes = [
                 prefix
                 for prefix in frontdoor["properties"]["addressPrefixes"]
-                if ipaddress.ip_network(prefix).version == 4
+                if ipaddress.ip_network(prefix).version == IPV4
             ]
             address_prefixes.sort()
-
-            return address_prefixes
-        except Exception:
+        except Exception:  # noqa: BLE001
             logger.exception()
+        else:
+            return address_prefixes
 
-    def check_database(self) -> list:
+    def _check_database(self) -> list:
         with Session(engine) as session:
             last_record = session.execute(select(FrontDoorRanges).order_by(FrontDoorRanges.id.desc())).first()
             try:
@@ -53,7 +58,7 @@ class CheckFrontDoorRanges:
                 ranges = []
             return ranges
 
-    def update_database(self, ranges: list) -> None:
+    def _update_database(self, ranges: list) -> None:
         with Session(engine) as session:
             insert = FrontDoorRanges(
                 ranges=ranges,
@@ -63,15 +68,20 @@ class CheckFrontDoorRanges:
             session.commit()
 
     def run(self) -> None:
-        live_ranges = self.check_azure()
-        database_ranges = self.check_database()
+        """Run the Azure Front Door IP range monitoring check.
+
+        Compares the live IP ranges to the ones stored in the database.
+        If they match, nothing is updated. If they don't match, the database is updated with the new ranges and an alert is sent.
+        """
+        live_ranges = self._check_azure()
+        database_ranges = self._check_database()
         if live_ranges == database_ranges:
             logger.info("All records match, nothing to update")
         else:
             logger.info("Records do not match, updating")
             logger.info(f"Previous records: {database_ranges}")
             logger.info(f"New records: {live_ranges}")
-            self.update_database(ranges=live_ranges)
+            self._update_database(ranges=live_ranges)
             alert_msteams(
                 title="Frontdoor IP Range Change",
                 facts=[

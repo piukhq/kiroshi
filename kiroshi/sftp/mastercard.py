@@ -1,6 +1,7 @@
+"""Module providing a class for interacting with Mastercard SFTP."""
+
 import io
 from pathlib import Path
-from weakref import ref
 
 import paramiko
 
@@ -10,14 +11,28 @@ AMOUNT_FIELD = slice(518, 518 + 12)
 
 
 class MastercardSFTP:
-    def __init__(self, host: str, port: int, user: str, keypath: str, directories: str) -> None:
+    """Class for interacting with Mastercard SFTP."""
+
+    def __init__(self, host: str, port: int, user: str, keypath: str, directories: str) -> None:  # noqa: PLR0913
+        """Initialize the MastercardSFTP class.
+
+        Args:
+            host (str): The hostname of the SFTP server.
+            port (int): The port number of the SFTP server.
+            user (str): The username to use when connecting to the SFTP server.
+            keypath (str): The path to the private key file to use when connecting to the SFTP server.
+            directories (str): A string containing the remote and local directories to copy files from/to, separated by a colon.
+
+        Returns:
+            None
+        """
         self.host = host
         self.port = port
         self.user = user
         self.keypath = keypath
         self.remote_path, self.local_path = directories.split(":")
 
-    def client(self) -> paramiko.SFTPClient:
+    def _connect(self) -> paramiko.SFTPClient:
         logger.info(
             "Connecting to Mastercard SFTP",
             host=self.host,
@@ -38,7 +53,7 @@ class MastercardSFTP:
         )
         return ssh.open_sftp()
 
-    def split_copy_file(self, fo: io.BytesIO, settlement_path: Path, refund_path: Path) -> None:
+    def _split_copy_file(self, fo: io.BytesIO, settlement_path: Path, refund_path: Path) -> None:
         content = io.TextIOWrapper(fo, encoding="utf-8")
 
         with settlement_path.open("w") as settlement, refund_path.open("w") as refund:
@@ -54,7 +69,12 @@ class MastercardSFTP:
                     file.write(line)
 
     def run(self) -> None:
-        client = self.client()
+        """Run the SFTP client to copy files from the remote server to the local machine.
+
+        Returns
+            None
+        """
+        client = self._connect()
 
         settlement_path = Path(self.local_path)
         refund_path = settlement_path.parent / "mastercard-refund/"
@@ -78,4 +98,4 @@ class MastercardSFTP:
             fo = io.BytesIO()
             client.getfo(Path(self.remote_path) / file, fo)
             fo.seek(0)
-            self.split_copy_file(fo, settlement_file, refund_file)
+            self._split_copy_file(fo, settlement_file, refund_file)

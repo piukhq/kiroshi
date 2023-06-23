@@ -1,3 +1,5 @@
+"""Module providing a command-line interface for copying blobs from SFTP Storage Accounts to Blob Storage Accounts."""
+
 import click
 
 from kiroshi.sftp.blobcopy import BlobCopy
@@ -9,11 +11,12 @@ from kiroshi.sftp.blobcopy import BlobCopy
 @click.option("--blob-container-name", help="The Blob Storage Container to use")
 @click.option("--blob-directory-name", help="The directory to copy blobs to")
 def blobcopy(
-    sftp_container_name: str, sftp_directory_name: str, blob_container_name: str, blob_directory_name: str
+    sftp_container_name: str,
+    sftp_directory_name: str,
+    blob_container_name: str,
+    blob_directory_name: str,
 ) -> None:
-    """
-    Copies Blobs from SFTP Storage Accounts to Blob Storage Accounts
-    """
+    """Copy Blobs from SFTP Storage Accounts to Blob Storage Accounts."""
     bc = BlobCopy(
         sftp_container_name=sftp_container_name,
         sftp_directory_name=sftp_directory_name,
