@@ -30,7 +30,7 @@ class MastercardSFTP:
         self.port = port
         self.user = user
         self.keypath = keypath
-        self.remote_path, self.local_path = directories.split(":")
+        self.remote_path, self.local_path = map(Path, directories.split(":"))
 
     def _connect(self) -> paramiko.SFTPClient:
         logger.info(
@@ -76,14 +76,14 @@ class MastercardSFTP:
         """
         client = self._connect()
 
-        settlement_path = Path(self.local_path)
+        settlement_path = self.local_path
         refund_path = settlement_path.parent / "mastercard-refund/"
 
         logger.info("Creating local directories", settlement_directory=settlement_path, refund_directory=refund_path)
         settlement_path.mkdir(parents=True, exist_ok=True)
         refund_path.mkdir(parents=True, exist_ok=True)
 
-        for file in client.listdir(self.remote_path):
+        for file in client.listdir(str(self.remote_path)):
             settlement_file = settlement_path / file
             refund_file = refund_path / file
 
@@ -96,6 +96,6 @@ class MastercardSFTP:
             )
 
             fo = io.BytesIO()
-            client.getfo(Path(self.remote_path) / file, fo)
+            client.getfo(str(self.remote_path / file), fo)
             fo.seek(0)
             self._split_copy_file(fo, settlement_file, refund_file)
