@@ -10,14 +10,16 @@ from kiroshi.sftp.mastercard import MastercardSFTP
     "-h",
     "--host",
     default="files.mastercard.com",
-    type=click.Choice(["files.mastercard.com", "mtf.files.mastercard.com"]),
+    type=click.Choice(
+        ["files.mastercard.com", "mtf.files.mastercard.com", "uksouthstagingsftpc75y.blob.core.windows.net"],
+    ),
     help="The Mastercard SFTP host to connect to",
 )
 @click.option(
     "-u",
     "--user",
     default="Z216458",
-    type=click.Choice(["Z218502", "Z216458", "Z218502"]),
+    type=click.Choice(["Z218502", "Z216458", "Z218502", "uksouthstagingsftpc75y.mastercard.kiroshi"]),
     help="The Mastercard SFTP user to use",
 )
 @click.option("-p", "--port", default=16022, type=int, help="The Mastercard SFTP port")
