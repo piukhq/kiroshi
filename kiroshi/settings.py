@@ -18,6 +18,7 @@ class Settings(BaseSettings):
 
     blob_storage_account_dsn: str | None = None
     sftp_storage_account_dsn: str | None = None
+    nfs_storage_account_dsn: str | None = None
 
 
 settings = Settings()
