@@ -41,6 +41,6 @@ force-exclude = 'original_code/*'
 
 [tool.ruff]
 select = ["ALL"]
-ignore = ["D203", "D213", "D407", "ANN101"]
+ignore = ["D203", "D213", "D407", "ANN101", "PLR0913"]
 line-length = 250
 exclude = ["original_code/"]

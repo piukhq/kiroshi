@@ -5,9 +5,8 @@ from trogon import tui
 
 from kiroshi.cli.checks.frontdoor import frontdoor as checks_frontdoor
 from kiroshi.cli.checks.spreedly import spreedly as checks_spreedly
-from kiroshi.cli.sftp.blobcopy import blobcopy as sftp_blobcopy
-from kiroshi.cli.sftp.mastercard import mastercard as sftp_mastercard
-from kiroshi.cli.sftp.wasabi import wasabi as sftp_wasabi
+from kiroshi.cli.storage.blob import blob as storage_blob
+from kiroshi.cli.storage.sftp import sftp as storage_sftp
 
 
 @tui()
@@ -21,16 +20,15 @@ def checks() -> None:
     """Group for Monitoring Tools."""
 
 
-@cli.group(name="sftp")
-def sftp() -> None:
+@cli.group(name="storage")
+def storage() -> None:
     """Group for SFTP Tools."""
 
 
 checks.add_command(checks_frontdoor)
 checks.add_command(checks_spreedly)
-sftp.add_command(sftp_mastercard)
-sftp.add_command(sftp_wasabi)
-sftp.add_command(sftp_blobcopy)
+storage.add_command(storage_blob)
+storage.add_command(storage_sftp)
 
 
 if __name__ == "__main__":
