@@ -49,7 +49,7 @@ from kiroshi.storage.sftp import SFTP
     "--hacks",
     required=False,
     help="Enable Provider Specific Hacks",
-    type=click.Choice(["mastercard", "wasabi"]),
+    type=click.Choice(["mastercard", "mastercard_testing", "wasabi"]),
 )
 def sftp(host: str, port: int, user: str, key: Path, path: Path, blob_path: str, hacks: str) -> None:
     """Third-Party SFTP Commands."""

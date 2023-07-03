@@ -7,6 +7,7 @@ from azure.storage.blob import BlobServiceClient
 
 from kiroshi.settings import logger, settings
 from kiroshi.storage.hacks.mastercard import _mastercard as hacks_mastercard
+from kiroshi.storage.hacks.mastercard_testing import _mastercard_testing as hacks_mastercard_testing
 from kiroshi.storage.hacks.wasabi import _wasabi as hacks_wasabi
 
 
@@ -83,6 +84,14 @@ class SFTP:
             match self.hacks:
                 case "mastercard":
                     hacks_mastercard(
+                        blob_client=self.blob_client,
+                        blob_container=self.blob_container,
+                        blob_directory=self.blob_directory,
+                        filename=filename,
+                        fo=fo,
+                    )
+                case "mastercard_testing":
+                    hacks_mastercard_testing(
                         blob_client=self.blob_client,
                         blob_container=self.blob_container,
                         blob_directory=self.blob_directory,
