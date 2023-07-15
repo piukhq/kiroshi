@@ -27,7 +27,7 @@ pendulum = "^2.1.2"
 beautifulsoup4 = "^4.11.2"
 azure-keyvault = "^4.2.0"
 trogon = "^0.2.1"
-cryptography = "^41.0.0"
+cryptography = "^41.0.2"
 paramiko = "^3.2.0"
 azure-storage-blob = "^12.16.0"
 
