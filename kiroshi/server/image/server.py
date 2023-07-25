@@ -1,12 +1,12 @@
 """Runs the Server Component for the Image Hosting Service."""
 import io
 import mimetypes
-from pathlib import Path
+import pathlib
 from typing import Annotated
 
 from azure.core.exceptions import ResourceNotFoundError
 from azure.storage.blob.aio import BlobServiceClient
-from fastapi import APIRouter, FastAPI, Header, status
+from fastapi import APIRouter, FastAPI, Header, Path, status
 from fastapi.responses import Response
 
 from kiroshi.server.common.healthchecks import Healthchecks
@@ -21,10 +21,14 @@ class ImageServer:
         self.router = APIRouter()
         self.router.add_api_route("/content/{blob:path}", self.serve, response_class=Response)
 
-    async def serve(self, container: Annotated[str | None, Header()], blob: str) -> Response:
+    async def serve(
+        self,
+        container: Annotated[str | None, Header(min_length=1)],
+        blob: Annotated[str | None, Path(min_length=1, max_length=50)],
+    ) -> Response:
         """Serve Images."""
         client = BlobServiceClient.from_connection_string(settings.blob_storage_account_dsn)
-        mimetype = mimetypes.types_map.get(Path(blob).suffix, "application/octet-stream")
+        mimetype = mimetypes.types_map.get(pathlib.Path(blob).suffix, "application/octet-stream")
         async with client:
             fo = io.BytesIO()
             try:
