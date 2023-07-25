@@ -36,6 +36,7 @@ class ImageServer:
             fo.seek(0)
             return Response(content=fo.read(), media_type=mimetype)
 
+
 app = FastAPI()
 images = ImageServer()
 healthchecks = Healthchecks()

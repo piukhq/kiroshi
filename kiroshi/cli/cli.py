@@ -25,6 +25,7 @@ def checks() -> None:
 def storage() -> None:
     """Group for SFTP Tools."""
 
+
 @cli.group(name="server")
 def server() -> None:
     """Group for Servers."""
