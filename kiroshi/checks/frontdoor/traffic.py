@@ -45,7 +45,7 @@ class CheckFrontDoorTraffic:
         If there has been no traffic for 30 minutes from a monitored domain, an alert is sent to OpsGenie.
         """
         counts = self._loganalytics()
-        for tenant in ["Barclays", "Lloyds"]:
+        for tenant in ("Barclays", "Lloyds"):
             if tenant in counts:
                 logger.info(f"{tenant}: {counts[tenant]}")
             else:

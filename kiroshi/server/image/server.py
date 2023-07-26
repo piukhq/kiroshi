@@ -48,5 +48,5 @@ healthchecks = Healthchecks()
 app.include_router(images.router)
 app.include_router(healthchecks.router)
 
-for log_name in ["uvicorn", "fastapi"]:
+for log_name in ("uvicorn", "fastapi"):
     logging.getLogger(log_name).handlers = [InterceptHandler()]
