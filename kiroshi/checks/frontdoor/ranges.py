@@ -5,12 +5,12 @@ import json
 import bs4
 import pendulum
 import requests
+from loguru import logger
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from kiroshi.alerts.ms_teams import alert_msteams
 from kiroshi.database import FrontDoorRanges, engine
-from kiroshi.settings import logger
 
 # in seconds
 REQUEST_TIMEOUT = 10

@@ -1,5 +1,6 @@
 """Runs the Server Component for the Image Hosting Service."""
 import io
+import logging
 import mimetypes
 import pathlib
 from typing import Annotated
@@ -10,7 +11,7 @@ from fastapi import APIRouter, FastAPI, Header, Path, status
 from fastapi.responses import Response
 
 from kiroshi.server.common.healthchecks import Healthchecks
-from kiroshi.settings import settings
+from kiroshi.settings import InterceptHandler, settings
 
 
 class ImageServer:
@@ -46,3 +47,6 @@ images = ImageServer()
 healthchecks = Healthchecks()
 app.include_router(images.router)
 app.include_router(healthchecks.router)
+
+for log_name in ["uvicorn", "fastapi"]:
+    logging.getLogger(log_name).handlers = [InterceptHandler()]

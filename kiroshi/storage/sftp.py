@@ -4,8 +4,9 @@ from pathlib import Path
 
 import paramiko
 from azure.storage.blob import BlobServiceClient
+from loguru import logger
 
-from kiroshi.settings import logger, settings
+from kiroshi.settings import settings
 from kiroshi.storage.hacks.mastercard import _mastercard as hacks_mastercard
 from kiroshi.storage.hacks.mastercard_testing import _mastercard_testing as hacks_mastercard_testing
 from kiroshi.storage.hacks.wasabi import _wasabi as hacks_wasabi

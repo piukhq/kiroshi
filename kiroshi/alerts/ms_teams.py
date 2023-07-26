@@ -30,5 +30,5 @@ def alert_msteams(title: str, facts: list) -> None:
             },
         ],
     }
-    request = requests.post(settings.ms_teams_webhook_url, json=payload, timeout=REQUEST_TIMEOUT)
+    request = requests.post(settings.ms_teams_webhook_url.unicode_string(), json=payload, timeout=REQUEST_TIMEOUT)
     request.raise_for_status()
