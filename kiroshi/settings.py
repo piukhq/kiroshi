@@ -1,15 +1,20 @@
 """Module containing application settings."""
-import sys
+import logging
 from pathlib import Path
+from typing import Annotated
 
-from loguru import logger
-from pydantic import BaseSettings, HttpUrl, PostgresDsn
+from bink_logging_utils import init_loguru_root_sink
+from bink_logging_utils.handlers import loguru_intercept_handler_factory
+from pydantic import Extra, HttpUrl, PlainValidator, PostgresDsn
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
     """Application settings."""
 
-    database_dsn: PostgresDsn = "postgresql://postgres@localhost:5432/postgres"
+    database_dsn: Annotated[
+        str, PlainValidator(lambda value: PostgresDsn(value).unicode_string())
+    ] = "postgresql://postgres@localhost:5432/postgres"
     ms_teams_webhook_url: HttpUrl = "https://hellobink.webhook.office.com/webhookb2/bf220ac8-d509-474f-a568-148982784d19@a6e2367a-92ea-4e5a-b565-723830bcc095/IncomingWebhook/23c006a9d7544926a1b1de9c8aedf625/48aca6b1-4d56-4a15-bc92-8aa9d97300df"
     opsgenie_api_key: str = "74f3f087-c29e-4490-a410-21c8f24e394c"
     opsgenie_url: str = "https://api.opsgenie.com/v2/alerts"
@@ -19,6 +24,12 @@ class Settings(BaseSettings):
     blob_storage_account_dsn: str | None = None
     sftp_storage_account_dsn: str | None = None
     nfs_storage_account_dsn: str | None = None
+
+    model_config = SettingsConfigDict(
+        extra=Extra.ignore,
+        env_file=".env",
+        env_file_encoding="utf-8",
+    )
 
 
 settings = Settings()
@@ -30,5 +41,8 @@ logger_format = (
     "<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - "
     "<level>{message}</level> | <green>{extra}</green>"
 )
-logger.remove()
-logger.add(sys.stdout, format=logger_format, serialize=settings.json_logging, colorize=not settings.json_logging)
+init_loguru_root_sink(
+    json_logging=settings.json_logging, sink_log_level=logging.DEBUG, show_pid=False, custom_formatter=logger_format
+)
+InterceptHandler = loguru_intercept_handler_factory()
+logging.basicConfig(handlers=[InterceptHandler()])

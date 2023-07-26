@@ -3,13 +3,13 @@
 import socket
 
 import pendulum
+from loguru import logger
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from kiroshi.alerts.freshservice import alert_freshservice
 from kiroshi.alerts.ms_teams import alert_msteams
 from kiroshi.database import FrontDoorIPs, engine
-from kiroshi.settings import logger
 
 
 class CheckFrontDoorIPs:

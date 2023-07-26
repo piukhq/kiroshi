@@ -2,8 +2,9 @@
 import io
 
 from azure.storage.blob import BlobServiceClient
+from loguru import logger
 
-from kiroshi.settings import logger, settings
+from kiroshi.settings import settings
 
 
 class Blob:

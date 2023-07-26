@@ -2,9 +2,9 @@
 import pendulum
 from azure.identity import DefaultAzureCredential
 from azure.monitor.query import LogsQueryClient
+from loguru import logger
 
 from kiroshi.alerts.opsgenie import opsgenie
-from kiroshi.settings import logger
 
 
 class CheckFrontDoorTraffic:
