@@ -2,4 +2,5 @@
 set -euo pipefail
 IFS=$'\n\t'
 ruff .
+refurb .
 black --check .
