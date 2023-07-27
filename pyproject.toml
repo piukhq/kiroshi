@@ -43,6 +43,7 @@ bink-logging-utils = {version = ">=1.4.0", source = "bink-pypi"}
 [tool.poetry.group.dev.dependencies]
 black = "^23.3.0"
 ruff = "^0.0.275"
+refurb = "^1.17.0"
 
 [tool.black]
 line-length = 120
