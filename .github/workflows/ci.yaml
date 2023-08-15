@@ -34,6 +34,12 @@ jobs:
           password: ${{ secrets.ACR_BINKCORE_PASSWORD }}
       - uses: docker/build-push-action@v4
         with:
+          file: basictest/Dockerfile
+          push: true
+          tags: |
+            binkcore.azurecr.io/${{ github.event.repository.name }}-test:latest
+      - uses: docker/build-push-action@v4
+        with:
           push: true
           tags: |
             binkcore.azurecr.io/${{ github.event.repository.name }}:${{ github.ref_name }}
