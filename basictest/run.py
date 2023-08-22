@@ -7,9 +7,6 @@ from pathlib import Path
 
 import requests
 
-with Path("/var/run/secrets/kubernetes.io/serviceaccount/namespace").open() as f:
-    namespace = f.read()
-
 report = []
 
 base_url = "http://kiroshi/content/"
@@ -31,8 +28,7 @@ for image in known_images:
         test_success = True
     report.append({"name": image["name"], "test_passed": test_success})
 
-test_id = namespace.split("-")[-1]
-with Path(f"/mnt/reports/{test_id}/report.json") as f:
+with Path("/mnt/reports/report.json") as f:
     f.touch()
     f.open("w")
     f.write_text(json.dumps(report, indent=4))

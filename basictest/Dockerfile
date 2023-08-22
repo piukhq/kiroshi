@@ -2,7 +2,7 @@ FROM ghcr.io/binkhq/python:3.11
 
 WORKDIR /app
 
-COPY . .
+COPY ./basictest/run.py run.py
 
-ENTRYPOINT [ "linkerd-await", "--shutdown", "--" ]
+ENTRYPOINT [ "linkerd-await", "--" ]
 CMD [ "python", "run.py" ]
