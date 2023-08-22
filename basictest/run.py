@@ -7,6 +7,16 @@ from pathlib import Path
 
 import requests
 
+# Loop forever until the pod is ready
+while True:
+    try:
+        requests.get("http://kiroshi/readyz", timeout=10).raise_for_status()
+        break
+    except requests.exceptions.ConnectionError:
+        pass
+    except requests.exceptions.HTTPError:
+        pass
+
 report = []
 
 base_url = "http://kiroshi/content/"
