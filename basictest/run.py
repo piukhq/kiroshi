@@ -28,11 +28,7 @@ for image in known_images:
         test_success = True
     report.append({"name": image["name"], "test_passed": test_success})
 
-report_file = Path("/mnt/reports/report.json")
-report_file.touch()
-report_file.open()
-report_file.write(json.dumps(report, indent=4))
-report_file.close()
+Path("/mnt/reports/report.json").write_text(json.dumps(report, indent=4))
 
 for result in report:
     if result["test_passed"] is False:
