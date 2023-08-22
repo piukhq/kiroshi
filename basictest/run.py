@@ -3,7 +3,6 @@
 import hashlib
 import json
 import sys
-from pathlib import Path
 
 import requests
 
@@ -28,10 +27,8 @@ for image in known_images:
         test_success = True
     report.append({"name": image["name"], "test_passed": test_success})
 
-with Path("/mnt/reports/report.json") as f:
-    f.touch()
-    f.open("w")
-    f.write_text(json.dumps(report, indent=4))
+with open("/mnt/reports/report.json", "w") as f:  # noqa: PTH123
+    f.write(json.dumps(report, indent=4))
 
 for result in report:
     if result["test_passed"] is False:
