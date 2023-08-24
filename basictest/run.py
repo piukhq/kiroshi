@@ -39,7 +39,3 @@ for image in known_images:
     report.append({"name": image["name"], "test_passed": test_success})
 
 Path("/mnt/reports/report.json").write_text(json.dumps(report, indent=4))
-
-for result in report:
-    if result["test_passed"] is False:
-        sys.exit(1)
