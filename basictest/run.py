@@ -35,10 +35,10 @@ for image in known_images:
     )
     test_success = False
     md5 = hashlib.md5(r.content).hexdigest()  # noqa: S324
-    print(base_url + image["name"])
-    print(md5)
-    print(image["md5"])
-    print(r.status_code)
+    print(base_url + image["name"])  # noqa: T201
+    print(md5)  # noqa: T201
+    print(image["md5"])  # noqa: T201
+    print(r.status_code)  # noqa: T201
     if md5 == image["md5"]:
         test_success = True
     report.append({"name": image["name"], "test_passed": test_success})
