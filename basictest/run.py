@@ -39,7 +39,7 @@ for image in known_images:
     print(md5)
     print(image["md5"])
     print(r.status_code)
-    if md5 == image["md5"]:  # noqa: S324
+    if md5 == image["md5"]:
         test_success = True
     report.append({"name": image["name"], "test_passed": test_success})
 
