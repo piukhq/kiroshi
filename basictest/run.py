@@ -21,13 +21,14 @@ report = []
 
 base_url = "http://kiroshi/content/"
 
-known_images = [
-    {"name": "bink.png", "md5": "a4c18cf88f80727a614bf476623c0644"},
-    {"name": "holly.jpg", "md5": "b9d6a24fcaca936b8609ab772718deae"},
-    {"name": "starbug.jpg", "md5": "df33e26308b049145ad54d442fdcc975"},
+images = [
+    {"name": "bink.png", "md5": "a4c18cf88f80727a614bf476623c0644", "available": True},
+    {"name": "holly.jpg", "md5": "b9d6a24fcaca936b8609ab772718deae", "available": True},
+    {"name": "starbug.jpg", "md5": "df33e26308b049145ad54d442fdcc975", "available": True},
+    {"name": "starbug1.jpg", "md5": "df33e26308b049145ad54d442fdcc75", "available": False},
 ]
 
-for image in known_images:
+for image in images:
     r = requests.get(
         base_url + image["name"],
         headers={"container": "kiroshi-test"},
@@ -39,8 +40,16 @@ for image in known_images:
     print(md5)  # noqa: T201
     print(image["md5"])  # noqa: T201
     print(r.status_code)  # noqa: T201
-    if md5 == image["md5"]:
+
+    """Negative Test when an Image is not available and
+     Happy Path Test when an Image is available"""
+
+    if r.status_code == 404 and image["available"] is False:
         test_success = True
+
+    elif md5 == image["md5"]:
+        test_success = True
+
     report.append({"name": image["name"], "test_passed": test_success})
 
 Path("/mnt/reports/report.json").write_text(json.dumps(report, indent=4))
