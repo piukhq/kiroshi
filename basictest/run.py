@@ -6,6 +6,7 @@ import sys
 from pathlib import Path
 
 import requests
+from fastapi import status
 
 # Loop forever until the pod is ready
 while True:
@@ -41,15 +42,11 @@ for image in images:
     print(image["md5"])  # noqa: T201
     print(r.status_code)  # noqa: T201
 
-    """Negative Test when an Image is not available and
-     Happy Path Test when an Image is available"""
+    """Check if the images are served correctly and the md5 matches
+    and the negative test for 404"""
 
-    if r.status_code == 404 and image["available"] is False:
+    if md5 == image["md5"] or (r.status_code == status.HTTP_404_NOT_FOUND and image["available"] is False):
         test_success = True
-
-    elif md5 == image["md5"]:
-        test_success = True
-
     report.append({"name": image["name"], "test_passed": test_success})
 
 Path("/mnt/reports/report.json").write_text(json.dumps(report, indent=4))
