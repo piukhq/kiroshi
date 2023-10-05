@@ -25,7 +25,7 @@ class ImageServer:
     async def serve(
         self,
         container: Annotated[str | None, Header(min_length=1)],
-        blob: Annotated[str | None, Path(min_length=1, max_length=50)],
+        blob: Annotated[str | None, Path(min_length=1, max_length=100)],
     ) -> Response:
         """Serve Images."""
         client = BlobServiceClient.from_connection_string(settings.blob_storage_account_dsn)
