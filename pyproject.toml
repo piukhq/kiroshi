@@ -44,13 +44,13 @@ bink-logging-utils = {version = ">=1.4.0", source = "bink-pypi"}
 black = "^23.3.0"
 ruff = "^0.0.275"
 refurb = "^1.17.0"
+pytest = "^7.4.2"
+pytest-html = "^4.0.2"
 
 [tool.black]
 line-length = 120
-force-exclude = 'original_code/*'
 
 [tool.ruff]
 select = ["ALL"]
-ignore = ["D203", "D213", "D407", "ANN101", "PLR0913", "COM812", "FA102"]
+ignore = ["ANN101", "COM812", "D203", "D213", "D407", "FA102", "G004", "PLR0913"]
 line-length = 250
-exclude = ["original_code/"]
