@@ -12,14 +12,13 @@ if platform.system() == "Darwin":
     base_url = "http://localhost:6502/content/"
 
 
-
-
 def get_image(url: str) -> bytes:
     """Get an image and return the content."""
     r = requests.get(url, headers={"container": "kiroshi-test"}, timeout=10)
     logging.debug(f"Requested URL {url}, Response Code: {r.status_code}")
     r.raise_for_status()
     return r.content
+
 
 def test_working_images() -> None:
     """Test the images that should work."""
@@ -35,6 +34,7 @@ def test_working_images() -> None:
         md5 = hashlib.md5(image_content).hexdigest()  # noqa: S324
         logging.debug(f"Expected MD5: {image['md5']}, Actual MD5: {md5}")
         assert md5 == image["md5"]  # noqa: S101
+
 
 def test_broken_images() -> None:
     """Test the images that should not work."""
