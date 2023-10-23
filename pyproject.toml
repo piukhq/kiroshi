@@ -39,6 +39,7 @@ fastapi = "^0.100.0"
 uvicorn = "^0.23.1"
 aiohttp = "^3.8.5"
 bink-logging-utils = {version = ">=1.4.0", source = "bink-pypi"}
+kr8s = "^0.9.2"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.3.0"
