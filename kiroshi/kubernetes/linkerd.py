@@ -7,13 +7,17 @@ from loguru import logger
 class KubernetesLinkerd:
     """Class for checking the existance of linkerd-proxy sidecars in pods."""
 
-    def __init__(self) -> None:
+    def __init__(self, exclude: str) -> None:
         """Initialize the KubernetesLinkerd class."""
+        self.exclude_namespaces = exclude.split(",") if exclude else None
 
     def check(self) -> None:
         """Check if linkerd annotation is present, if so, check linkerd-proxy is present and at the correct version."""
         linkerd_version = kr8s.get("pods", namespace="linkerd")[0].spec.containers[0].image.split(":")[1]
-        pods = kr8s.get("pods", namespace=kr8s.ALL)
+        selector = ""
+        if self.exclude_namespaces:
+            for i in self.exclude_namespaces: selector += f"metadata.namespace!={i},"
+        pods = kr8s.get("pods", namespace=kr8s.ALL, field_selector=selector)
         logger.info(f"Linkerd version: {linkerd_version}")
         for pod in pods:
             logger.info(f"Checking pod {pod.metadata.name} in namespace {pod.metadata.namespace}")
