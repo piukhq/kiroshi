@@ -16,7 +16,8 @@ class KubernetesLinkerd:
         linkerd_version = kr8s.get("pods", namespace="linkerd")[0].spec.containers[0].image.split(":")[1]
         selector = ""
         if self.exclude_namespaces:
-            for i in self.exclude_namespaces: selector += f"metadata.namespace!={i},"
+            for i in self.exclude_namespaces:
+                selector += f"metadata.namespace!={i},"
         pods = kr8s.get("pods", namespace=kr8s.ALL, field_selector=selector)
         logger.info(f"Linkerd version: {linkerd_version}")
         for pod in pods:
