@@ -4,11 +4,12 @@ import click
 
 
 @click.command(name="linkerd")
-def linkerd() -> None:
+@click.option("--exclude", required=False, type=str, help="Namespaces to exclude, comma separated.")
+def linkerd(exclude: str) -> None:
     """Check for the existance of linkerd-proxy sidecars in pods, delete pods without them."""
     from kiroshi.kubernetes.linkerd import KubernetesLinkerd
 
-    KubernetesLinkerd().check()
+    KubernetesLinkerd(exclude).check()
 
 
 @click.command(name="scale")
