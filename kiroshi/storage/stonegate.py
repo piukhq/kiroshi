@@ -70,7 +70,7 @@ class Stonegate:
     def run(self) -> None:
         """Send files to Boreas."""
         session = requests.Session()
-        session.mount("https://", HTTPAdapter(max_retries=self.retries))
+        session.mount("http://", HTTPAdapter(max_retries=self.retries))
         blob_count, blob_list = self.files_to_process()
         remaining_count = blob_count
         logger.info(f"Approximate number of files to process: {blob_count}")
