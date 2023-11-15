@@ -10,6 +10,7 @@ from kiroshi.cli.kubernetes import scale as kubernetes_scale
 from kiroshi.cli.server.image import image as server_image
 from kiroshi.cli.storage.blob import blob as storage_blob
 from kiroshi.cli.storage.sftp import sftp as storage_sftp
+from kiroshi.cli.storage.stonegate import stonegate as storage_stonegate
 
 
 @tui()
@@ -42,6 +43,7 @@ checks.add_command(checks_frontdoor)
 checks.add_command(checks_spreedly)
 storage.add_command(storage_blob)
 storage.add_command(storage_sftp)
+storage.add_command(storage_stonegate)
 server.add_command(server_image)
 kubernetes.add_command(kubernetes_linkerd)
 kubernetes.add_command(kubernetes_scale)
