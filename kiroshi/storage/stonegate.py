@@ -101,4 +101,3 @@ class Stonegate:
             if heartbeat_counter == heartbeat_counter_limit:
                 self.checkly_heartbeat()
                 heartbeat_counter = 0
-            break
