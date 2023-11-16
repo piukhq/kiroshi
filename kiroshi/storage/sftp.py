@@ -49,7 +49,7 @@ class SFTP:
         self.blob_container, self.blob_directory = blob_path.split(":")
         self.hacks = hacks
 
-    @retry(stop=stop_after_attempt(3), wait=wait_fixed(5))
+    @retry(stop=stop_after_attempt(5), wait=wait_fixed(30))
     def _connect(self) -> paramiko.SFTPClient:
         logger.info(
             "Connecting to SFTP Server",
