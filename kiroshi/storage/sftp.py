@@ -5,6 +5,7 @@ from pathlib import Path
 import paramiko
 from azure.storage.blob import BlobServiceClient
 from loguru import logger
+from tenacity import retry, stop_after_attempt, wait_fixed
 
 from kiroshi.settings import settings
 from kiroshi.storage.hacks.mastercard import _mastercard as hacks_mastercard
@@ -48,6 +49,7 @@ class SFTP:
         self.blob_container, self.blob_directory = blob_path.split(":")
         self.hacks = hacks
 
+    @retry(stop=stop_after_attempt(3), wait=wait_fixed(5))
     def _connect(self) -> paramiko.SFTPClient:
         logger.info(
             "Connecting to SFTP Server",
