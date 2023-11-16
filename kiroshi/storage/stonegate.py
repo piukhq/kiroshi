@@ -16,20 +16,26 @@ class Stonegate:
     def __init__(self) -> None:
         """Initialize the Stonegate class."""
         self.sftp_container = "stonegate"
-        self.sftp_directory = "uploads"
-        self.sftp_archive = "archive"
-        self.sftp_failed = "failed"
+        self.sftp_archive_container = "stonegate-archive"
+        self.sftp_failed_container = "stonegate-failed"
         self.blob_client = BlobServiceClient.from_connection_string(settings.sftp_storage_account_dsn)
         self.container_client = self.blob_client.get_container_client(container=self.sftp_container)
+        self.archive_client = self.blob_client.get_container_client(container=self.sftp_archive_container)
+        self.failed_client = self.blob_client.get_container_client(container=self.sftp_failed_container)
         self.retries = Retry(
             total=5, backoff_factor=1, status_forcelist=[400, 401, 404, 405, 408, 429, 499, 500, 502, 504]
         )
+
+    def checkly_heartbeat(self) -> None:
+        """Inform Checkly that the job has completed."""
+        url = "https://ping.checklyhq.com/ba868f10-ca0d-41ab-a61b-2325492b3954"
+        requests.post(url, timeout=10)
 
     def files_to_process(self) -> tuple[int, list]:
         """Count the number of files in the SFTP container."""
         files = [
             blob.name
-            for blob in self.container_client.list_blobs(name_starts_with=self.sftp_directory + "/")
+            for blob in self.container_client.list_blobs()
             if blob.name.endswith(".json")
         ]
         return (len(files), files)
@@ -37,16 +43,15 @@ class Stonegate:
     def move_blob(self, blob_name: str, data: BytesIO, operation: str) -> None:
         """Move a blob to a different directory."""
         if operation == "archive":
-            new_name = blob_name.replace(self.sftp_directory, self.sftp_archive)
+            client = self.archive_client.get_blob_client(blob=blob_name)
         elif operation == "failed":
-            new_name = blob_name.replace(self.sftp_directory, self.sftp_failed)
+            client = self.failed_client.get_blob_client(blob=blob_name)
         else:
             raise ValueError("Invalid operation provided.")  # noqa: TRY003, EM101
-        blob_client = self.container_client.get_blob_client(blob=new_name)
-        blob_client.upload_blob(data, overwrite=True)
+        client.upload_blob(data, overwrite=True)
         delete_client = self.container_client.get_blob_client(blob=blob_name)
         delete_client.delete_blob()
-        logger.info(f"Moved Blob: {blob_name} to {new_name}")
+        logger.info(f"Moved Blob: {blob_name}")
 
     def send_to_boreas(self, session: requests.Session, payload: list) -> None:
         """Send a payload to Boreas."""
@@ -75,10 +80,17 @@ class Stonegate:
         blob_count, blob_list = self.files_to_process()
         remaining_count = blob_count
         logger.info(f"Approximate number of files to process: {blob_count}")
+        heartbeat_counter = 0
+        heartbeat_counter_limit = 1000
         for blob in blob_list:
             remaining_count -= 1
             logger.info(f"Processing Blob: {blob}, {remaining_count} files remaining of {blob_count}")
-            data, payload = self.download_blob(blob_name=blob)
+            try:
+                data, payload = self.download_blob(blob_name=blob)
+            except json.decoder.JSONDecodeError:
+                logger.error(f"Failed processing Blob: {blob} due to a download error")
+                self.move_blob(blob_name=blob, data=data, operation="failed")
+                continue
             try:
                 self.send_to_boreas(session=session, payload=payload)
             except requests.exceptions.HTTPError:
@@ -89,3 +101,8 @@ class Stonegate:
                 logger.error(f"Failed processing Blob: {blob} due to a retryable connection error, skipping...")
                 continue
             self.move_blob(blob_name=blob, data=data, operation="archive")
+            heartbeat_counter += 1
+            if heartbeat_counter == heartbeat_counter_limit:
+                self.checkly_heartbeat()
+                heartbeat_counter = 0
+            break
