@@ -56,25 +56,17 @@ class SFTP:
             user=self.sftp_user,
             key=self.sftp_key,
         )
-        retry = 0
-        max_retry = 3
-        while retry < max_retry:
-            try:
-                ssh = paramiko.SSHClient()
-                ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-                key = paramiko.RSAKey.from_private_key_file(self.sftp_key)
-                ssh.connect(
-                    hostname=self.sftp_host,
-                    port=self.sftp_port,
-                    username=self.sftp_user,
-                    pkey=key,
-                    disabled_algorithms={"pubkeys": ["rsa-sha2-256", "rsa-sha2-512"]},
-                )
-                return ssh.open_sftp()
-            except paramiko.SSHException:
-                logger.error("SSHException, retrying")
-                retry += 1
-        return logger.error("Failed to connect to SFTP Server")
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        key = paramiko.RSAKey.from_private_key_file(self.sftp_key)
+        ssh.connect(
+            hostname=self.sftp_host,
+            port=self.sftp_port,
+            username=self.sftp_user,
+            pkey=key,
+            disabled_algorithms={"pubkeys": ["rsa-sha2-256", "rsa-sha2-512"]},
+        )
+        return ssh.open_sftp()
 
     def _copy_to_blob_storage(self, filename: str, fo: io.BytesIO) -> None:
         blob_client = self.blob_client.get_blob_client(
