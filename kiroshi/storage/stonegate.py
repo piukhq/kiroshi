@@ -33,11 +33,7 @@ class Stonegate:
 
     def files_to_process(self) -> tuple[int, list]:
         """Count the number of files in the SFTP container."""
-        files = [
-            blob.name
-            for blob in self.container_client.list_blobs()
-            if blob.name.endswith(".json")
-        ]
+        files = [blob.name for blob in self.container_client.list_blobs() if blob.name.endswith(".json")]
         return (len(files), files)
 
     def move_blob(self, blob_name: str, data: BytesIO, operation: str) -> None:
