@@ -71,13 +71,12 @@ class Stonegate:
 
     def run(self) -> None:
         """Send files to Boreas."""
+        self.checkly_heartbeat()
         session = requests.Session()
         session.mount("http://", HTTPAdapter(max_retries=self.retries))
         blob_count, blob_list = self.files_to_process()
         remaining_count = blob_count
         logger.info(f"Approximate number of files to process: {blob_count}")
-        heartbeat_counter = 0
-        heartbeat_counter_limit = 1000
         for blob in blob_list:
             remaining_count -= 1
             logger.info(f"Processing Blob: {blob}, {remaining_count} files remaining of {blob_count}")
@@ -85,7 +84,10 @@ class Stonegate:
                 data, payload = self.download_blob(blob_name=blob)
             except json.decoder.JSONDecodeError:
                 logger.error(f"Failed processing Blob: {blob} due to a download error")
-                self.move_blob(blob_name=blob, data=data, operation="failed")
+                try:
+                    self.move_blob(blob_name=blob, data=data, operation="failed")
+                except UnboundLocalError:
+                    logger.error("Failed to move Blob, skipping...")
                 continue
             try:
                 self.send_to_boreas(session=session, payload=payload)
@@ -97,7 +99,3 @@ class Stonegate:
                 logger.error(f"Failed processing Blob: {blob} due to a retryable connection error, skipping...")
                 continue
             self.move_blob(blob_name=blob, data=data, operation="archive")
-            heartbeat_counter += 1
-            if heartbeat_counter == heartbeat_counter_limit:
-                self.checkly_heartbeat()
-                heartbeat_counter = 0
