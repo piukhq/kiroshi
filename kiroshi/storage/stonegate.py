@@ -1,13 +1,10 @@
 """Module for handling the transfer of files from SFTP to Boreas via API."""
 import json
-from io import BytesIO
+import os
 
 import requests
-from azure.storage.blob import BlobServiceClient
+from azure.storage.fileshare import ShareDirectoryClient, ShareFileClient
 from loguru import logger
-from requests.adapters import HTTPAdapter, Retry
-
-from kiroshi.settings import settings
 
 
 class Stonegate:
@@ -15,39 +12,13 @@ class Stonegate:
 
     def __init__(self) -> None:
         """Initialize the Stonegate class."""
-        self.sftp_container = "stonegate"
-        self.sftp_archive_container = "stonegate-archive"
-        self.sftp_failed_container = "stonegate-failed"
-        self.blob_client = BlobServiceClient.from_connection_string(settings.sftp_storage_account_dsn)
-        self.container_client = self.blob_client.get_container_client(container=self.sftp_container)
-        self.archive_client = self.blob_client.get_container_client(container=self.sftp_archive_container)
-        self.failed_client = self.blob_client.get_container_client(container=self.sftp_failed_container)
-        self.retries = Retry(
-            total=5, backoff_factor=1, status_forcelist=[400, 401, 404, 405, 408, 429, 499, 500, 502, 504]
-        )
+        self.connection_string = "DefaultEndpointsProtocol=https;AccountName=sggtactical;AccountKey=5isH1DYwAaWftB5SHlQQLsliQk6h09SH5tBMscAtSFltca4YD29NdBB2ak8urXvuylK6kZHWM0pi+AStpWAzNA==;EndpointSuffix=core.windows.net"
+        self.share_name = "transactions"
 
     def checkly_heartbeat(self) -> None:
         """Inform Checkly that the job has completed."""
         url = "https://ping.checklyhq.com/ba868f10-ca0d-41ab-a61b-2325492b3954"
-        requests.post(url, timeout=10)
-
-    def files_to_process(self) -> tuple[int, list]:
-        """Count the number of files in the SFTP container."""
-        files = [blob.name for blob in self.container_client.list_blobs() if blob.name.endswith(".json")]
-        return (len(files), files)
-
-    def move_blob(self, blob_name: str, data: BytesIO, operation: str) -> None:
-        """Move a blob to a different directory."""
-        if operation == "archive":
-            client = self.archive_client.get_blob_client(blob=blob_name)
-        elif operation == "failed":
-            client = self.failed_client.get_blob_client(blob=blob_name)
-        else:
-            raise ValueError("Invalid operation provided.")  # noqa: TRY003, EM101
-        client.upload_blob(data, overwrite=True)
-        delete_client = self.container_client.get_blob_client(blob=blob_name)
-        delete_client.delete_blob()
-        logger.info(f"Moved Blob: {blob_name}")
+        requests.get(url, timeout=5)
 
     def send_to_boreas(self, session: requests.Session, payload: list) -> None:
         """Send a payload to Boreas."""
@@ -59,43 +30,35 @@ class Stonegate:
         logger.info(f"Boreas Response: {request.status_code}")
         request.raise_for_status()
 
-    def download_blob(self, blob_name: str) -> tuple[BytesIO, list]:
-        """Download a blob from SFTP."""
-        blob_client = self.container_client.get_blob_client(blob=blob_name)
-        data = BytesIO()
-        blob_client.download_blob().readinto(data)
-        data.seek(0)
-        json_list = [json.loads(data.read().decode("utf-8"))]
-        data.seek(0)
-        return (data, json_list)
+    def list_files(self, dir_path: str = "") -> list:
+        """List all files in Storage Share."""
+        dir_client = ShareDirectoryClient.from_connection_string(
+            conn_str=self.connection_string,
+            share_name=self.share_name,
+            directory_path=dir_path
+        )
+        for file in dir_client.list_directories_and_files():
+            name, is_directory = file["name"], file["is_directory"]
+            path = os.path.join(dir_path, name)  # noqa: PTH118
+            if is_directory:
+                childrens = self.list_files(
+                    dir_path=path,
+                )
+                yield from childrens
+            else:
+                yield path
 
     def run(self) -> None:
-        """Send files to Boreas."""
+        """Primary entrypoint for class."""
         self.checkly_heartbeat()
-        session = requests.Session()
-        session.mount("http://", HTTPAdapter(max_retries=self.retries))
-        blob_count, blob_list = self.files_to_process()
-        remaining_count = blob_count
-        logger.info(f"Approximate number of files to process: {blob_count}")
-        for blob in blob_list:
-            remaining_count -= 1
-            logger.info(f"Processing Blob: {blob}, {remaining_count} files remaining of {blob_count}")
+        for file in self.list_files():
             try:
-                data, payload = self.download_blob(blob_name=blob)
-            except json.decoder.JSONDecodeError:
-                logger.error(f"Failed processing Blob: {blob} due to a download error")
-                try:
-                    self.move_blob(blob_name=blob, data=data, operation="failed")
-                except UnboundLocalError:
-                    logger.error("Failed to move Blob, skipping...")
+                file_client = ShareFileClient.from_connection_string(self.connection_string, self.share_name, file)
+                data = file_client.download_file()
+                payload = [json.loads(data.readall().decode("utf-8"))]
+                self.send_to_boreas(session=requests.Session(), payload=payload)
+                file_client.delete_file()
+                logger.info(f"Processing File: {file}")
+            except (json.decoder.JSONDecodeError, requests.exceptions.HTTPError):  # noqa: PERF203
+                logger.error(f"Failed processing File: {file}, will retry on next run")
                 continue
-            try:
-                self.send_to_boreas(session=session, payload=payload)
-            except requests.exceptions.HTTPError:
-                logger.error(f"Failed processing Blob: {blob} due to a HTTP error")
-                self.move_blob(blob_name=blob, data=data, operation="failed")
-                continue
-            except requests.exceptions.ConnectionError:
-                logger.error(f"Failed processing Blob: {blob} due to a retryable connection error, skipping...")
-                continue
-            self.move_blob(blob_name=blob, data=data, operation="archive")
