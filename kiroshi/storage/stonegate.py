@@ -23,7 +23,7 @@ class Stonegate:
     def send_to_boreas(self, session: requests.Session, payload: list) -> None:
         """Send a payload to Boreas."""
         request = session.post(
-            "http://boreas-api.default/retailers/stonegate/transactions",
+            "http://boreas-api.olympus/retailers/stonegate/transactions",
             headers={"X-API-Key": "3694954aaf9acce7452a1b54d6960a0d"},
             json=payload,
         )
