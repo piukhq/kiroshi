@@ -57,6 +57,6 @@ class Stonegate:
                 self.send_to_boreas(session=requests.Session(), payload=payload)
                 file_client.delete_file()
                 logger.info(f"Processing File: {file}")
-            except (json.decoder.JSONDecodeError, requests.exceptions.HTTPError):  # noqa: PERF203
+            except (json.decoder.JSONDecodeError, requests.exceptions.HTTPError, UnicodeDecodeError):  # noqa: PERF203
                 logger.error(f"Failed processing File: {file}, will retry on next run")
                 continue
