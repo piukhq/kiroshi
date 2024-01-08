@@ -1,9 +1,0 @@
-FROM ghcr.io/binkhq/python:3.11
-
-RUN pip install pytest pytest-html requests
-
-WORKDIR /tests
-ADD tests/ .
-
-ENTRYPOINT [ "linkerd-await", "--shutdown", "--" ]
-CMD [ "pytest", "image_server.py", "--html=/mnt/reports/report.html", "--self-contained-html" ]

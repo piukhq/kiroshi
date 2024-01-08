@@ -10,12 +10,12 @@ authors = ["Bink DevOps <devops@bink.com>"]
 readme = "README.md"
 
 [tool.poetry.scripts]
-kiroshi = "kiroshi.cli.cli:cli" # cli
+kiroshi = "kiroshi.cli.cli:cli"
 
 [[tool.poetry.source]]
-name = "bink-pypi"
-url = "https://pypi.gb.bink.com/simple"
-priority = "supplemental"
+name = "azure"
+url = "https://pkgs.dev.azure.com/binkhq/_packaging/binkhq/pypi/simple/"
+priority = "primary"
 
 [tool.poetry.dependencies]
 python = "^3.11"
