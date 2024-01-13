@@ -1,6 +1,6 @@
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]
+build-backend = "poetry_dynamic_versioning.backend"
 
 [tool.poetry]
 name = "Kiroshi"
@@ -10,44 +10,43 @@ authors = ["Bink DevOps <devops@bink.com>"]
 readme = "README.md"
 
 [tool.poetry.scripts]
-kiroshi = "kiroshi.cli.cli:cli" # cli
+kiroshi = "kiroshi.cli.cli:cli"
 
 [[tool.poetry.source]]
-name = "bink-pypi"
-url = "https://pypi.gb.bink.com/simple"
-priority = "supplemental"
+name = "azure"
+url = "https://pkgs.dev.azure.com/binkhq/_packaging/binkhq/pypi/simple/"
+priority = "primary"
 
 [tool.poetry.dependencies]
-python = "^3.11"
-azure-identity = "^1"
-azure-monitor-query = "^1"
-sqlalchemy = "^2"
-pydantic-settings = "^2"
-click = "^8"
-alembic = "^1"
-psycopg2-binary = "^2"
-requests = "^2"
-loguru = "^0"
-pendulum = "^2"
-beautifulsoup4 = "^4"
-azure-keyvault = "^4"
-trogon = "^0"
-cryptography = "^41"
-paramiko = "^3"
-azure-storage-blob = "^12"
-fastapi = "^0"
-uvicorn = "^0"
-aiohttp = "^3"
-bink-logging-utils = "^1"
-kr8s = "^0"
-tenacity = "^8"
+python = "^3.12"
+azure-identity = "^1.15.0"
+azure-monitor-query = "^1.2.0"
+sqlalchemy = "^2.0.25"
+pydantic-settings = "^2.1.0"
+click = "^8.1.7"
+alembic = "^1.13.1"
+psycopg2-binary = "^2.9.9"
+requests = "^2.31.0"
+loguru = "^0.7.2"
+pendulum = "^3.0.0"
+beautifulsoup4 = "^4.12.2"
+azure-keyvault = "^4.2.0"
+trogon = "^0.5.0"
+paramiko = "^3.4.0"
+azure-storage-blob = "^12.19.0"
+fastapi = "^0.109.0"
+uvicorn = "^0.25.0"
+aiohttp = "^3.9.1"
+bink-logging-utils = "^1.4.0"
+kr8s = "^0.12.15"
+tenacity = "^8.2.3"
 azure-storage-file-share = "^12.15.0"
 
 [tool.poetry.group.dev.dependencies]
-black = "^23"
-ruff = "^0"
-pytest = "^7"
-pytest-html = "^4"
+black = "^23.12.1"
+ruff = "^0.1.13"
+pytest = "^7.4.4"
+pytest-html = "^4.1.1"
 
 [tool.black]
 line-length = 120
@@ -56,3 +55,6 @@ line-length = 120
 select = ["ALL"]
 ignore = ["ANN101", "COM812", "D203", "D213", "D407", "FA102", "G004", "PLR0913"]
 line-length = 250
+
+[tool.poetry-dynamic-versioning]
+enable = true
