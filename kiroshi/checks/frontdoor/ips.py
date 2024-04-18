@@ -20,6 +20,7 @@ class CheckFrontDoorIPs:
 
         Args:
             domain (str): The Azure Front Door domain to check.
+
         """
         self.domain = domain
 

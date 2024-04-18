@@ -23,18 +23,12 @@ class KubernetesLinkerd:
         for pod in pods:
             logger.info(f"Checking pod {pod.metadata.name} in namespace {pod.metadata.namespace}")
             if "linkerd.io/inject" in pod.annotations:
-                container = next(
-                    (container for container in pod.spec.containers if container.name == "linkerd-proxy"), None
-                )
+                container = next((container for container in pod.spec.containers if container.name == "linkerd-proxy"), None)
                 if not container:
-                    logger.warning(
-                        f"linkerd-proxy not present in pod {pod.metadata.name} in namespace {pod.metadata.namespace}, deleting pod"
-                    )
+                    logger.warning(f"linkerd-proxy not present in pod {pod.metadata.name} in namespace {pod.metadata.namespace}, deleting pod")
                     pod.delete()
                 if container:
                     pod_linkerd_version = container.image.split(":")[1]
                     if pod_linkerd_version != linkerd_version:
-                        logger.warning(
-                            f"linkerd-proxy version {pod_linkerd_version} in pod {pod.metadata.name} in namespace {pod.metadata.namespace} does not match linkerd version {linkerd_version}, deleting pod"
-                        )
+                        logger.warning(f"linkerd-proxy version {pod_linkerd_version} in pod {pod.metadata.name} in namespace {pod.metadata.namespace} does not match linkerd version {linkerd_version}, deleting pod")
                         pod.delete()

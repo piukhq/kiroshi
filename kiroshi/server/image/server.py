@@ -1,4 +1,5 @@
 """Runs the Server Component for the Image Hosting Service."""
+
 import io
 import logging
 import mimetypes

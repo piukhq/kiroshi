@@ -1,4 +1,5 @@
 """Hacks for Mastercard SFTP."""
+
 import io
 
 from azure.storage.blob import BlobServiceClient

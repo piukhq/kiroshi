@@ -1,4 +1,5 @@
 """General Purpose SFTP to Blob Storage Utility."""
+
 import io
 from pathlib import Path
 
@@ -39,6 +40,7 @@ class SFTP:
 
         Returns:
             None
+
         """
         self.sftp_host = sftp_host
         self.sftp_port = sftp_port

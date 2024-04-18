@@ -1,4 +1,5 @@
 """Module for handling the transfer of files from SFTP to Boreas via API."""
+
 import json
 import os
 
@@ -32,9 +33,7 @@ class Stonegate:
 
     def list_files(self, dir_path: str = "") -> list:
         """List all files in Storage Share."""
-        dir_client = ShareDirectoryClient.from_connection_string(
-            conn_str=self.connection_string, share_name=self.share_name, directory_path=dir_path
-        )
+        dir_client = ShareDirectoryClient.from_connection_string(conn_str=self.connection_string, share_name=self.share_name, directory_path=dir_path)
         for file in dir_client.list_directories_and_files():
             name, is_directory = file["name"], file["is_directory"]
             path = os.path.join(dir_path, name)  # noqa: PTH118

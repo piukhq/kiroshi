@@ -22,6 +22,7 @@ def check_frontdoor_ips(domain: str) -> None:
 
     Returns:
         None
+
     """
     check = CheckFrontDoorIPs(domain=domain)
     check.run()
@@ -33,6 +34,7 @@ def check_frontdoor_range() -> None:
 
     Returns
         None
+
     """
     check = CheckFrontDoorRanges()
     check.run()
@@ -48,6 +50,7 @@ def check_frontdoor_traffic(domain: str) -> None:
 
     Returns:
         None
+
     """
     check = CheckFrontDoorTraffic(domain=domain)
     check.run()

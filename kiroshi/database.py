@@ -6,6 +6,7 @@ It defines the following models:
 
 Each model represents a table in the database and is defined using SQLAlchemy.
 """
+
 from datetime import datetime
 
 from sqlalchemy import ARRAY, String, create_engine
@@ -22,7 +23,7 @@ class FrontDoorRanges(Base):
 
     __tablename__ = "frontdoor_ranges"
 
-    id: Mapped[int] = mapped_column(primary_key=True)  # noqa: A003
+    id: Mapped[int] = mapped_column(primary_key=True)
     ranges: Mapped[list[str] | None] = mapped_column(ARRAY(String))
     last_updated: Mapped[datetime | None]
 
@@ -32,7 +33,7 @@ class FrontDoorIPs(Base):
 
     __tablename__ = "frontdoor_ips"
 
-    id: Mapped[int] = mapped_column(primary_key=True)  # noqa: A003
+    id: Mapped[int] = mapped_column(primary_key=True)
     domain: Mapped[str | None]
     ips: Mapped[list[str] | None] = mapped_column(ARRAY(String))
     last_updated: Mapped[datetime | None]

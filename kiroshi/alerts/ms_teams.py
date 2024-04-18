@@ -1,4 +1,5 @@
 """Module containing functions for sending alerts to Microsoft Teams."""
+
 import requests
 
 from kiroshi.settings import settings
@@ -16,6 +17,7 @@ def alert_msteams(title: str, facts: list) -> None:
 
     Returns:
         None
+
     """
     payload = {
         "@type": "MessageCard",
