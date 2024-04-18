@@ -19,6 +19,7 @@ def alert_freshservice(subject: str, message: str, to: str = "operations@bink.co
         subject (str): The subject of the email.
         message (str): The body of the email.
         to (str, optional): The email address to send the alert to. Defaults to "operations@bink.com".
+
     """
     requests.post(
         f"{mg_auth['MAILGUN_API']}/{mg_auth['MAILGUN_DOMAIN']}/messages",

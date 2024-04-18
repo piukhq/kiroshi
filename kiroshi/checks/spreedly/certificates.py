@@ -1,4 +1,5 @@
 """Module providing the CheckSpreedlyCertificates class."""
+
 import json
 
 import pendulum

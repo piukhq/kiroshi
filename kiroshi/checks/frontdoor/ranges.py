@@ -1,4 +1,5 @@
 """Module containing Azure Front Door IP range monitoring checks."""
+
 import ipaddress
 import json
 

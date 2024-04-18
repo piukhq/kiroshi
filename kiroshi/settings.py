@@ -1,4 +1,5 @@
 """Module containing application settings."""
+
 import logging
 from pathlib import Path
 from typing import Annotated
@@ -12,9 +13,9 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     """Application settings."""
 
-    database_dsn: Annotated[
-        str, PlainValidator(lambda value: PostgresDsn(value).unicode_string())
-    ] = "postgresql://postgres@localhost:5432/postgres"
+    database_dsn: Annotated[str, PlainValidator(lambda value: PostgresDsn(value).unicode_string())] = (
+        "postgresql://postgres@localhost:5432/postgres"
+    )
     ms_teams_webhook_url: HttpUrl = "https://hellobink.webhook.office.com/webhookb2/bf220ac8-d509-474f-a568-148982784d19@a6e2367a-92ea-4e5a-b565-723830bcc095/IncomingWebhook/23c006a9d7544926a1b1de9c8aedf625/48aca6b1-4d56-4a15-bc92-8aa9d97300df"
     secret_store: Path = Path("/tmp")  # noqa: S108
     json_logging: bool = True

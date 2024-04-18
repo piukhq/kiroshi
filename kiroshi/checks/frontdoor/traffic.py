@@ -1,4 +1,5 @@
 """Module containing front door traffic monitoring checks."""
+
 import pendulum
 from azure.identity import DefaultAzureCredential
 from azure.monitor.query import LogsQueryClient
@@ -15,6 +16,7 @@ class CheckFrontDoorTraffic:
 
         Args:
             domain (str): The domain to monitor traffic for.
+
         """
         self.workspace_id = "eed2b98d-3396-4972-be3e-3e744532f7cd"
         self.domain = domain

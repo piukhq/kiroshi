@@ -1,4 +1,5 @@
 """Sets up CLI for the Image Server."""
+
 import click
 import uvicorn
 
