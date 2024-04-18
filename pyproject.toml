@@ -43,7 +43,6 @@ tenacity = "^8.2.3"
 azure-storage-file-share = "^12.15.0"
 
 [tool.poetry.group.dev.dependencies]
-black = "^23.12.1"
 pytest = "^7.4.4"
 pytest-html = "^4.1.1"
 ruff = "^0.3.7"
@@ -65,6 +64,7 @@ ignore = [
     "G004",
     "PLR0913",
     "S507",
+    "ISC001",
 ]
 select = ["ALL"]
 

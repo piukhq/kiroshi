@@ -17,23 +17,11 @@ class Blob:
         self.destination_type, self.destination_container, self.destination_directory = destination.split(":")
 
         self.source_client = BlobServiceClient.from_connection_string(
-            settings.blob_storage_account_dsn
-            if self.source_type == "blob"
-            else settings.sftp_storage_account_dsn
-            if self.source_type == "sftp"
-            else settings.nfs_storage_account_dsn
-            if self.source_type == "nfs"
-            else None,
+            settings.blob_storage_account_dsn if self.source_type == "blob" else settings.sftp_storage_account_dsn if self.source_type == "sftp" else settings.nfs_storage_account_dsn if self.source_type == "nfs" else None,
         )
 
         self.destination_client = BlobServiceClient.from_connection_string(
-            settings.blob_storage_account_dsn
-            if self.destination_type == "blob"
-            else settings.sftp_storage_account_dsn
-            if self.destination_type == "sftp"
-            else settings.nfs_storage_account_dsn
-            if self.destination_type == "nfs"
-            else None,
+            settings.blob_storage_account_dsn if self.destination_type == "blob" else settings.sftp_storage_account_dsn if self.destination_type == "sftp" else settings.nfs_storage_account_dsn if self.destination_type == "nfs" else None,
         )
 
     def run(self) -> None:

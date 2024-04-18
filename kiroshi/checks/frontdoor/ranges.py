@@ -26,8 +26,7 @@ class CheckFrontDoorRanges:
         try:
             page = "https://www.microsoft.com/en-us/download/confirmation.aspx?id=56519"
             headers = {
-                "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
-                "(KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36 Edg/109.0.1518.78",
+                "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 " "(KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36 Edg/109.0.1518.78",
             }
             request = requests.get(page, headers=headers, timeout=REQUEST_TIMEOUT)
             request.raise_for_status()
@@ -39,11 +38,7 @@ class CheckFrontDoorRanges:
             data = json.loads(file_resp.content)
             frontdoor = next(section for section in data["values"] if section["id"] == "AzureFrontDoor.Frontend")
 
-            address_prefixes = [
-                prefix
-                for prefix in frontdoor["properties"]["addressPrefixes"]
-                if ipaddress.ip_network(prefix).version == IPV4
-            ]
+            address_prefixes = [prefix for prefix in frontdoor["properties"]["addressPrefixes"] if ipaddress.ip_network(prefix).version == IPV4]
             address_prefixes.sort()
         except Exception:  # noqa: BLE001
             logger.exception()

@@ -18,7 +18,5 @@ class KubernetesScale:
             deployments = kr8s.get("deployments", namespace=namespace)
             for deployment in deployments:
                 current_replicas = deployment.spec.replicas
-                logger.info(
-                    f"Scaling {deployment.metadata.name} in namespace {namespace} from {current_replicas} to {self.replicas}"
-                )
+                logger.info(f"Scaling {deployment.metadata.name} in namespace {namespace} from {current_replicas} to {self.replicas}")
                 deployment.scale(self.replicas)
