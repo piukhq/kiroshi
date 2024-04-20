@@ -519,11 +519,25 @@ reference = "azure"
 
 [[package]]
 name = "bink-logging-utils"
-version = "1.4.0"
+version = "1.4.1"
 description = "helper functions for setting up loguru as the default log output"
 optional = false
-python-versions = "*"
-files = []
+python-versions = ">=3.11,<4.0"
+files = [
+    {file = "bink_logging_utils-1.4.1-py3-none-any.whl", hash = "sha256:da0e3dc99eba2b0a6e5e69f5c9a6eb22eda4618d61357a4a064b2f01a627f448"},
+    {file = "bink_logging_utils-1.4.1.tar.gz", hash = "sha256:81c7fbaa57e0ca109c50144cb3ad8b6da811bfcce5560e2dd321db27ef8f18b0"},
+]
+
+[package.dependencies]
+loguru = ">=0.7.0,<0.8.0"
+
+[package.extras]
+gunicorn = ["gunicorn (>=20.1.0,<21.0.0)"]
+
+[package.source]
+type = "legacy"
+url = "https://pkgs.dev.azure.com/binkhq/_packaging/binkhq/pypi/simple"
+reference = "azure"
 
 [[package]]
 name = "cachetools"
