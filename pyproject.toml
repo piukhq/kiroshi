@@ -38,7 +38,7 @@ fastapi = "^0.109.0"
 uvicorn = "^0.25.0"
 aiohttp = "^3.9.1"
 bink-logging-utils = "^1.4.0"
-kr8s = "^0.12.15"
+kr8s = "^0.15.0"
 tenacity = "^8.2.3"
 azure-storage-file-share = "^12.15.0"
 
